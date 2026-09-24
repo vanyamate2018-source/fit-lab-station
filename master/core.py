@@ -11,6 +11,31 @@ class StationCore:
         self.journal = EventJournal(max_events=1000)
 
     def register_module(self, module: ModuleInfo) -> bool:
+        existing = self.registry.get(module.module_id)
+        if existing is not None:
+            if existing.kind is not module.kind:
+                self.journal.append(
+                    Event.now(
+                        severity=Severity.ERROR,
+                        source="master",
+                        code="module.identity_conflict",
+                        message=f"Конфликт идентификатора модуля: {module.public_label()}",
+                        details={"module_id": module.module_id},
+                    )
+                )
+                return False
+
+            existing.name = module.name
+            existing.capabilities = set(module.capabilities)
+            existing.protocol_version = module.protocol_version
+            try:
+                if module.protocol_version != existing.protocol_version:
+                    raise ProtocolMismatchError("protocol version changed")
+                self.heartbeat(existing.module_id)
+            except (ProtocolMismatchError, KeyError):
+                return False
+            return True
+
         try:
             self.registry.register(module)
         except ProtocolMismatchError as exc:
@@ -40,8 +65,12 @@ class StationCore:
         )
         return True
 
-    def heartbeat(self, module_id: str) -> None:
-        module, previous_state = self.registry.heartbeat(module_id)
+    def heartbeat(self, module_id: str) -> bool:
+        try:
+            module, previous_state = self.registry.heartbeat(module_id)
+        except KeyError:
+            return False
+
         if previous_state in {ModuleState.UNREACHABLE, ModuleState.RECONNECTING}:
             self.journal.append(
                 Event.now(
@@ -52,6 +81,7 @@ class StationCore:
                     details={"module_id": module.module_id},
                 )
             )
+        return True
 
     def check_stale_modules(self, timeout_seconds: float = 5.0) -> None:
         for module in self.registry.mark_stale(timeout_seconds):
