@@ -5,7 +5,12 @@ from dataclasses import dataclass
 
 from master.core import StationCore
 from shared.models import ModuleInfo
-from shared.wire import ModuleAnnouncement, WireProtocolError, decode_announcement
+from shared.wire import (
+    ModuleAnnouncement,
+    ModuleHeartbeat,
+    WireProtocolError,
+    decode_message,
+)
 
 
 @dataclass(slots=True, frozen=True)
@@ -13,6 +18,7 @@ class DiscoveryResult:
     accepted: bool
     address: tuple[str, int]
     module_id: str | None
+    message_type: str | None = None
     error: str | None = None
 
 
@@ -26,7 +32,7 @@ class DiscoveryServer:
         address: tuple[str, int],
     ) -> DiscoveryResult:
         try:
-            announcement: ModuleAnnouncement = decode_announcement(data)
+            message = decode_message(data)
         except WireProtocolError as exc:
             return DiscoveryResult(
                 accepted=False,
@@ -35,20 +41,38 @@ class DiscoveryServer:
                 error=str(exc),
             )
 
-        module = ModuleInfo(
-            module_id=announcement.module_id,
-            kind=announcement.kind,
-            name=announcement.name,
-            protocol_version=announcement.protocol_version,
-            capabilities=set(announcement.capabilities),
-        )
+        if isinstance(message, ModuleAnnouncement):
+            module = ModuleInfo(
+                module_id=message.module_id,
+                kind=message.kind,
+                name=message.name,
+                protocol_version=message.protocol_version,
+                capabilities=set(message.capabilities),
+            )
+            accepted = self.station.register_module(module)
+            return DiscoveryResult(
+                accepted=accepted,
+                address=address,
+                module_id=module.module_id if accepted else None,
+                message_type="module.hello",
+                error=None if accepted else "module rejected",
+            )
 
-        accepted = self.station.register_module(module)
+        if isinstance(message, ModuleHeartbeat):
+            accepted = self.station.heartbeat(message.module_id)
+            return DiscoveryResult(
+                accepted=accepted,
+                address=address,
+                module_id=message.module_id if accepted else None,
+                message_type="module.heartbeat",
+                error=None if accepted else "unknown module",
+            )
+
         return DiscoveryResult(
-            accepted=accepted,
+            accepted=False,
             address=address,
-            module_id=module.module_id if accepted else None,
-            error=None if accepted else "module rejected",
+            module_id=None,
+            error="unsupported message",
         )
 
     def receive_once(
