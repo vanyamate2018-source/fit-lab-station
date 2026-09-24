@@ -19,9 +19,12 @@ def main() -> None:
     )
 
     station.register_module(receiver)
-    for _ in range(3):
-        station.heartbeat(receiver.module_id)
-        time.sleep(0.1)
+    station.heartbeat(receiver.module_id)
+
+    time.sleep(0.15)
+    station.check_stale_modules(timeout_seconds=0.05)
+
+    station.heartbeat(receiver.module_id)
 
     for event in station.journal.snapshot():
         print(f"[{event.severity}] {event.message}")
