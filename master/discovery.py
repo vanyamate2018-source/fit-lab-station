@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from master.core import StationCore
 from shared.models import ModuleInfo
+from shared.protocol import PROTOCOL_VERSION
 from shared.wire import (
     ModuleAnnouncement,
     ModuleHeartbeat,
@@ -59,6 +60,14 @@ class DiscoveryServer:
             )
 
         if isinstance(message, ModuleHeartbeat):
+            if message.protocol_version != PROTOCOL_VERSION:
+                return DiscoveryResult(
+                    accepted=False,
+                    address=address,
+                    module_id=None,
+                    message_type="module.heartbeat",
+                    error="protocol mismatch",
+                )
             accepted = self.station.heartbeat(message.module_id)
             return DiscoveryResult(
                 accepted=accepted,
