@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from shared.events import Event, EventJournal, Severity
 from shared.models import ModuleInfo, ModuleState
+from shared.protocol import PROTOCOL_VERSION
 from shared.registry import ModuleRegistry, ProtocolMismatchError
 
 
@@ -11,6 +12,24 @@ class StationCore:
         self.journal = EventJournal(max_events=1000)
 
     def register_module(self, module: ModuleInfo) -> bool:
+        if module.protocol_version != PROTOCOL_VERSION:
+            self.journal.append(
+                Event.now(
+                    severity=Severity.ERROR,
+                    source="master",
+                    code="module.protocol_incompatible",
+                    message=f"Несовместимая версия протокола: {module.public_label()}",
+                    details={
+                        "module_id": module.module_id,
+                        "reason": (
+                            f"protocol {module.protocol_version} "
+                            f"is incompatible with {PROTOCOL_VERSION}"
+                        ),
+                    },
+                )
+            )
+            return False
+
         existing = self.registry.get(module.module_id)
         if existing is not None:
             if existing.kind is not module.kind:
@@ -28,13 +47,7 @@ class StationCore:
             existing.name = module.name
             existing.capabilities = set(module.capabilities)
             existing.protocol_version = module.protocol_version
-            try:
-                if module.protocol_version != existing.protocol_version:
-                    raise ProtocolMismatchError("protocol version changed")
-                self.heartbeat(existing.module_id)
-            except (ProtocolMismatchError, KeyError):
-                return False
-            return True
+            return self.heartbeat(existing.module_id)
 
         try:
             self.registry.register(module)
