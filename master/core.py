@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from shared.events import Event, EventJournal, Severity
-from shared.models import ModuleInfo
+from shared.models import ModuleInfo, ModuleState
 from shared.registry import ModuleRegistry, ProtocolMismatchError
 
 
@@ -41,7 +41,17 @@ class StationCore:
         return True
 
     def heartbeat(self, module_id: str) -> None:
-        self.registry.heartbeat(module_id)
+        module, previous_state = self.registry.heartbeat(module_id)
+        if previous_state in {ModuleState.UNREACHABLE, ModuleState.RECONNECTING}:
+            self.journal.append(
+                Event.now(
+                    severity=Severity.INFO,
+                    source="master",
+                    code="module.reconnected",
+                    message=f"Связь восстановлена: {module.public_label()}",
+                    details={"module_id": module.module_id},
+                )
+            )
 
     def check_stale_modules(self, timeout_seconds: float = 5.0) -> None:
         for module in self.registry.mark_stale(timeout_seconds):
