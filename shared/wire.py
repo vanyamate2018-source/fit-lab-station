@@ -21,18 +21,16 @@ class ModuleAnnouncement:
     capabilities: tuple[str, ...]
 
 
-def encode_announcement(message: ModuleAnnouncement) -> bytes:
-    payload = {
-        "protocol": PROTOCOL_NAME,
-        "version": message.protocol_version,
-        "type": "module.hello",
-        "module": {
-            "id": message.module_id,
-            "kind": message.kind.value,
-            "name": message.name,
-            "capabilities": list(message.capabilities),
-        },
-    }
+@dataclass(slots=True, frozen=True)
+class ModuleHeartbeat:
+    module_id: str
+    protocol_version: int
+
+
+WireMessage = ModuleAnnouncement | ModuleHeartbeat
+
+
+def _encode(payload: dict[str, Any]) -> bytes:
     return json.dumps(
         payload,
         ensure_ascii=False,
@@ -41,7 +39,7 @@ def encode_announcement(message: ModuleAnnouncement) -> bytes:
     ).encode("utf-8")
 
 
-def decode_announcement(data: bytes) -> ModuleAnnouncement:
+def _decode_payload(data: bytes) -> dict[str, Any]:
     try:
         payload: dict[str, Any] = json.loads(data.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
@@ -49,13 +47,69 @@ def decode_announcement(data: bytes) -> ModuleAnnouncement:
 
     if payload.get("protocol") != PROTOCOL_NAME:
         raise WireProtocolError("unknown protocol")
-    if payload.get("type") != "module.hello":
-        raise WireProtocolError("unsupported message type")
 
     version = payload.get("version")
     if not isinstance(version, int):
         raise WireProtocolError("invalid protocol version")
 
+    return payload
+
+
+def encode_announcement(message: ModuleAnnouncement) -> bytes:
+    return _encode(
+        {
+            "protocol": PROTOCOL_NAME,
+            "version": message.protocol_version,
+            "type": "module.hello",
+            "module": {
+                "id": message.module_id,
+                "kind": message.kind.value,
+                "name": message.name,
+                "capabilities": list(message.capabilities),
+            },
+        }
+    )
+
+
+def encode_heartbeat(message: ModuleHeartbeat) -> bytes:
+    return _encode(
+        {
+            "protocol": PROTOCOL_NAME,
+            "version": message.protocol_version,
+            "type": "module.heartbeat",
+            "module_id": message.module_id,
+        }
+    )
+
+
+def decode_message(data: bytes) -> WireMessage:
+    payload = _decode_payload(data)
+    message_type = payload.get("type")
+
+    if message_type == "module.hello":
+        return _decode_announcement_payload(payload)
+    if message_type == "module.heartbeat":
+        return _decode_heartbeat_payload(payload)
+
+    raise WireProtocolError("unsupported message type")
+
+
+def decode_announcement(data: bytes) -> ModuleAnnouncement:
+    message = decode_message(data)
+    if not isinstance(message, ModuleAnnouncement):
+        raise WireProtocolError("expected module.hello")
+    return message
+
+
+def decode_heartbeat(data: bytes) -> ModuleHeartbeat:
+    message = decode_message(data)
+    if not isinstance(message, ModuleHeartbeat):
+        raise WireProtocolError("expected module.heartbeat")
+    return message
+
+
+def _decode_announcement_payload(payload: dict[str, Any]) -> ModuleAnnouncement:
+    version = payload["version"]
     module = payload.get("module")
     if not isinstance(module, dict):
         raise WireProtocolError("missing module payload")
@@ -85,6 +139,17 @@ def decode_announcement(data: bytes) -> ModuleAnnouncement:
         name=name,
         protocol_version=version,
         capabilities=tuple(capabilities_raw),
+    )
+
+
+def _decode_heartbeat_payload(payload: dict[str, Any]) -> ModuleHeartbeat:
+    module_id = payload.get("module_id")
+    if not isinstance(module_id, str) or not module_id.strip():
+        raise WireProtocolError("invalid module id")
+
+    return ModuleHeartbeat(
+        module_id=module_id,
+        protocol_version=payload["version"],
     )
 
 
