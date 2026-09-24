@@ -13,16 +13,24 @@ dependencies = []
 dev = [
     "pytest>=8",
 ]
-
-[tool.setuptools]
-packages = [
-    "master",
-    "receiver",
-    "control",
-    "sdr",
-    "shared",
-    "simulator",
+ui = [
+    "PySide6>=6.8,<7",
 ]
+
+[project.scripts]
+fit-lab-master = "master.gui:main"
+
+[tool.setuptools.packages.find]
+include = [
+    "master*",
+    "receiver*",
+    "control*",
+    "sdr*",
+    "shared*",
+    "simulator*",
+    "tools*",
+]
+exclude = ["tests*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
