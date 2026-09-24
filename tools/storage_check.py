@@ -5,7 +5,7 @@ from shared.storage import ensure_directories, probe_storage
 
 
 def main() -> None:
-    config = StationConfig.from_env()
+    config = StationConfig.load()
     ensure_directories(config.data_root, config.required_directories())
     status = probe_storage(config.data_root)
 
