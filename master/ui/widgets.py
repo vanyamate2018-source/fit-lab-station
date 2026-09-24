@@ -78,9 +78,9 @@ class ModuleCard(QFrame):
         self.state_label.setText(state.capitalize())
         self.id_label.setText(f"ID: {module_id or '—'}")
 
-        connected = module_id is not None and state not in {"не подключен", "нет связи"}
+        # Until authenticated module pairing exists, destructive controls remain disabled.
         for button in (self.service_button, self.reboot_button, self.shutdown_button):
-            button.setEnabled(connected)
+            button.setEnabled(False)
 
 
 class PageHeader(QWidget):
