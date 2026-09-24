@@ -24,12 +24,13 @@ class ModuleRegistry:
         self._modules[module.module_id] = module
         return module
 
-    def heartbeat(self, module_id: str) -> ModuleInfo:
+    def heartbeat(self, module_id: str) -> tuple[ModuleInfo, ModuleState]:
         module = self._modules[module_id]
+        previous_state = module.state
         module.last_seen_monotonic = time.monotonic()
         if module.state in {ModuleState.UNREACHABLE, ModuleState.RECONNECTING}:
             module.state = ModuleState.READY
-        return module
+        return module, previous_state
 
     def mark_stale(self, timeout_seconds: float) -> list[ModuleInfo]:
         if timeout_seconds <= 0:
@@ -37,7 +38,10 @@ class ModuleRegistry:
         now = time.monotonic()
         stale: list[ModuleInfo] = []
         for module in self._modules.values():
-            if now - module.last_seen_monotonic > timeout_seconds:
+            if (
+                now - module.last_seen_monotonic > timeout_seconds
+                and module.state is not ModuleState.UNREACHABLE
+            ):
                 module.state = ModuleState.UNREACHABLE
                 stale.append(module)
         return stale
