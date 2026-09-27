@@ -40,16 +40,20 @@ def _encode(payload: dict[str, Any]) -> bytes:
 
 
 def _decode_payload(data: bytes) -> dict[str, Any]:
+    if len(data) > 8192:
+        raise WireProtocolError("packet too large")
     try:
         payload: dict[str, Any] = json.loads(data.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise WireProtocolError("invalid JSON packet") from exc
 
+    if not isinstance(payload, dict):
+        raise WireProtocolError("expected JSON object")
     if payload.get("protocol") != PROTOCOL_NAME:
         raise WireProtocolError("unknown protocol")
 
     version = payload.get("version")
-    if not isinstance(version, int):
+    if type(version) is not int:
         raise WireProtocolError("invalid protocol version")
 
     return payload
@@ -119,12 +123,12 @@ def _decode_announcement_payload(payload: dict[str, Any]) -> ModuleAnnouncement:
     kind_raw = module.get("kind")
     capabilities_raw = module.get("capabilities", [])
 
-    if not isinstance(module_id, str) or not module_id.strip():
+    if not isinstance(module_id, str) or not module_id.strip() or len(module_id) > 128 or any(ord(c) < 32 for c in module_id):
         raise WireProtocolError("invalid module id")
-    if not isinstance(name, str):
+    if not isinstance(name, str) or len(name) > 128 or any(ord(c) < 32 for c in name):
         raise WireProtocolError("invalid module name")
-    if not isinstance(capabilities_raw, list) or not all(
-        isinstance(item, str) for item in capabilities_raw
+    if not isinstance(capabilities_raw, list) or len(capabilities_raw) > 64 or not all(
+        isinstance(item, str) and len(item) <= 128 for item in capabilities_raw
     ):
         raise WireProtocolError("invalid capabilities")
 
@@ -144,7 +148,7 @@ def _decode_announcement_payload(payload: dict[str, Any]) -> ModuleAnnouncement:
 
 def _decode_heartbeat_payload(payload: dict[str, Any]) -> ModuleHeartbeat:
     module_id = payload.get("module_id")
-    if not isinstance(module_id, str) or not module_id.strip():
+    if not isinstance(module_id, str) or not module_id.strip() or len(module_id) > 128:
         raise WireProtocolError("invalid module id")
 
     return ModuleHeartbeat(

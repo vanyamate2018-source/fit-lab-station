@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import StrEnum
+from shared.compat import StrEnum
 
 
 class ModuleKind(StrEnum):
@@ -34,6 +34,9 @@ class ModuleInfo:
     capabilities: set[str] = field(default_factory=set)
     state: ModuleState = ModuleState.DISCOVERED
     last_seen_monotonic: float = 0.0
+    address: str = ""
 
     def public_label(self) -> str:
+        if self.kind is ModuleKind.RECEIVER and 'radio.forward.encrypted' in self.capabilities:
+            return 'Видеомодуль WFB'
         return self.name.strip() or self.kind.value

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>FIT-LAB · Прямой эфир</title>
+<meta name="theme-color" content="#17191b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="FIT-LAB">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/app-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<style>
+:root{color-scheme:dark;--amber:#ffc16c;--line:#3c362e;--muted:#a9aaa9}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% 0,#30271e 0,transparent 48%),#101214;color:#f4f1e9;font:16px system-ui,-apple-system,sans-serif}main{max-width:1440px;margin:auto;padding:22px 22px max(22px,env(safe-area-inset-bottom))}header{display:flex;align-items:center;gap:18px;margin:4px 0 18px}.brand{font-size:24px;font-weight:750;letter-spacing:3px;color:var(--amber)}.sub{color:var(--muted);font-size:12px;letter-spacing:2px}#status{margin-left:auto;display:flex;gap:8px;align-items:center;font-size:13px}#dot{width:8px;height:8px;border-radius:50%;background:#a58b68}body[data-live=true] #dot{background:#69d99e;box-shadow:0 0 12px #69d99e88;animation:breathe 2s infinite}@keyframes breathe{50%{opacity:.55}}.screen{position:relative;background:#050606;border:1px solid var(--line);border-radius:15px;overflow:hidden;aspect-ratio:16/9;box-shadow:0 20px 55px #0005}video{display:block;width:100%;height:100%;object-fit:contain}#placeholder{position:absolute;inset:0;display:grid;place-content:center;color:var(--muted);pointer-events:none}.metrics{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--line);border-radius:12px;margin-top:12px;background:linear-gradient(110deg,#201e1a,#151719);padding:18px 0}.metric{padding:0 20px;border-right:1px solid var(--line)}.metric:last-child{border:0}.value{font-size:25px;font-variant-numeric:tabular-nums;color:var(--amber);white-space:nowrap}.caption{font-size:11px;text-transform:uppercase;letter-spacing:1.1px;color:var(--muted);margin-top:6px}.actions{display:flex;gap:10px;align-items:center;margin-top:15px}button{background:#211e19;border:1px solid #675139;border-radius:10px;color:#ffe1b4;min-height:48px;padding:0 19px;font:inherit;cursor:pointer;transition:background .2s,transform .15s}button:hover{background:#3c2e1d}button:active{transform:scale(.97)}button:focus-visible{outline:2px solid var(--amber);outline-offset:3px}.note{font-size:12px;color:var(--muted);margin-left:auto}footer{margin-top:18px;font-size:12px;color:#838784}@media(max-width:650px){main{padding:12px}.sub{display:none}.metrics{grid-template-columns:repeat(3,1fr);gap:18px 0}.metric{padding:0 12px}.value{font-size:20px}.metric:nth-child(3){border:0}.caption{font-size:10px}.note{display:none}header{gap:8px}.brand{font-size:20px}#status{font-size:12px}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+[hidden]{display:none!important}
+.brand-icon{width:40px;height:40px;border-radius:10px;flex:none}.quickstart{margin-top:18px;color:var(--muted);font-size:13px}.quickstart summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:10px;color:#e5c496}.quickstart summary:focus-visible{outline:2px solid var(--amber);outline-offset:3px}.quickstart[open]{padding-bottom:10px}.quickstart h3{font-size:14px;color:#f4f1e9;margin:20px 0 10px}.quickstart ol{padding-left:21px;line-height:1.7}.quickstart code{color:var(--amber);overflow-wrap:anywhere}.quickstart p{line-height:1.6}.actions{flex-wrap:wrap}main{padding-top:max(16px,env(safe-area-inset-top));padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+.actions button{display:inline-flex;align-items:center;justify-content:center;gap:10px;touch-action:manipulation}.actions svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;flex:none}#play::before{content:'';width:15px;height:15px;border:2px solid currentColor;border-radius:4px}body[data-paused=true] #play::before{border-radius:50%;background:var(--amber);box-shadow:0 0 12px #ffc16c33}#placeholder{gap:14px;text-align:center;padding:24px;background:#080a0bd9;backdrop-filter:blur(8px)}#placeholder::before{content:'';margin:auto;width:30px;height:30px;border:2px solid #ffc16c28;border-top-color:var(--amber);border-radius:50%;animation:spin 1.5s linear infinite}body[data-paused=true] #placeholder::before{animation:none;border-color:#ffc16c66}#placeholderText{max-width:32ch;line-height:1.5}#exitFullscreen{display:none;position:absolute;z-index:2;right:max(16px,env(safe-area-inset-right));top:max(16px,env(safe-area-inset-top));background:#16191de8;min-width:48px}.screen:fullscreen{width:100vw;height:100vh;border:0;border-radius:0;aspect-ratio:auto}.screen:fullscreen #exitFullscreen,body.immersive #exitFullscreen{display:block}body.immersive{overflow:hidden}body.immersive #screen{position:fixed;inset:0;z-index:10;width:100%;height:100%;border:0;border-radius:0;aspect-ratio:auto}@keyframes spin{to{transform:rotate(360deg)}}@media(orientation:landscape) and (max-height:500px){header{margin-bottom:10px}.screen{max-height:72dvh}.metrics{padding:12px 0}.actions{margin-top:10px}}@media(max-width:380px){.metrics{grid-template-columns:repeat(2,1fr)}.metric:nth-child(3){border-right:1px solid var(--line)}.metric:nth-child(even){border-right:0}.brand{letter-spacing:2px}.actions button{flex:1;padding:0 12px;font-size:14px}}
+#record::before{content:'';width:13px;height:13px;border:2px solid #ff7770;border-radius:50%}body[data-recording=true] #record::before{background:#ff514b;box-shadow:0 0 14px #ff514b88;animation:breathe 1.4s infinite}body[data-recording=true] #record{border-color:#b95b52;color:#ffd7d0}.clip-save{display:inline-flex;align-items:center;min-height:48px;padding:0 16px;border:1px solid #826135;border-radius:10px;color:var(--amber);text-decoration:none}#recordNote{font-size:12px;color:var(--muted);min-height:18px;margin:12px 0 0}button:disabled{opacity:.5;cursor:default}
+</style>
+<main><header><img class="brand-icon" src="/app-icon.png" width="40" height="40" alt=""><span class="brand">FIT-LAB</span><span class="sub">ПРЯМОЙ ЭФИР</span><span id="status"><i id="dot"></i><span id="statusText">Подключение</span></span></header>
+<section class="screen" id="screen"><video id="video" autoplay playsinline muted aria-label="Прямой эфир камеры"></video><div id="placeholder"><span id="placeholderText">Ожидание изображения</span></div><button id="exitFullscreen" aria-label="Выйти из полного экрана">✕</button></section>
+<section class="metrics" aria-label="Показатели просмотра">
+<div class="metric"><div class="value" id="fps">—</div><div class="caption">FPS</div></div>
+<div class="metric"><div class="value" id="rate">—</div><div class="caption">Мбит/с</div></div>
+<div class="metric"><div class="value" id="size">—</div><div class="caption">Разрешение</div></div>
+<div class="metric"><div class="value" id="loss">—</div><div class="caption">Потери просмотра</div></div>
+<div class="metric"><div class="value" id="buffer">—</div><div class="caption">Буфер · мс</div></div>
+</section><div class="actions"><button id="play">Остановить</button><button id="record" aria-label="Запись на это устройство">Запись</button><a id="saveClip" class="clip-save" hidden>Сохранить запись</a><button id="fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg>Полный экран</button><span class="note">Показатели на этом устройстве</span></div>
+<p id="recordNote" role="status" aria-live="polite"></p>
+<button id="installApp" aria-controls="quickstart" style="margin-top:12px">На главный экран</button>
+<details class="quickstart" id="quickstart"><summary>＋ Приложение на телефоне и ПК</summary>
+<h3>Иконка на главном экране</h3><ol><li>Откройте эту страницу в Safari.</li><li>Нажмите «Поделиться» → «На экран Домой».</li><li>Оставьте имя FIT-LAB и включите «Открывать как веб-приложение», если этот переключатель доступен.</li></ol>
+<h3>Android</h3><p>Откройте страницу в Chrome → меню ⋮ → «Добавить на главный экран». Если браузер предложит установку, подтвердите её. Для просмотра оставайтесь в сети FIT-LAB.</p>
+<h3>Компьютер</h3><p>Сохраните страницу в закладках. Если в меню браузера доступно «Установить» или «Открыть как приложение», используйте его для отдельного окна. Возможность установки зависит от браузера и защищённого подключения; локальная HTTP-ссылка не гарантирует её.</p>
+<h3>Запись на устройство</h3><p>Нажмите «Запись», затем «Стоп» и «Сохранить запись». На iPhone файл сохраняется через Safari в «Файлы». Не закрывайте страницу до сохранения. Один фрагмент — до 10 минут или 128 МБ.</p>
+<h3>Открывать при подключении к FIT-LAB</h3><ol><li>В приложении «Команды» добавьте автоматизацию для подключения к Wi-Fi <b>FIT-LAB</b>.</li><li>Выберите «Запускать немедленно», если доступно.</li><li>Добавьте действие «Открыть URL» с адресом <code id="quickUrl"></code>.</li></ol>
+<p>Эту настройку нужно один раз подтвердить на iPhone. Для показа окна может потребоваться разблокировать телефон.</p></details>
+<footer>Локальная трансляция · H.264 · до 30 FPS</footer></main>
+<script src="/recorder.js"></script>
+<script src="/install.js"></script>
+<script>document.getElementById('quickUrl').textContent=location.origin+'/';</script>
+<script>
+ 'use strict';
+const $=id=>document.getElementById(id),video=$('video');
+let pc=null,resource=null,wanted=true,retry=null,previous=null,generation=0,abort=null,lastFrame=0,started=0,blocked=false,statsBusy=false,attempt=0,suspended=false;
+const endpoint=new URL('/live/whep',location.origin);endpoint.port='8889';
+function state(text,live=false){$('statusText').textContent=text;document.body.dataset.live=live;document.body.dataset.paused=!wanted||blocked;$('placeholderText').textContent=text;}
+function metricsReset(){for(const id of ['fps','rate','loss','buffer','size'])$(id).textContent='—';}
+function removeResource(url){if(url)fetch(url,{method:'DELETE',keepalive:true}).catch(()=>{});}
+function closePeer(){window.fitLabRecorder?.stop('Соединение изменилось');generation++;abort?.abort();abort=null;clearTimeout(retry);retry=null;pc?.close();pc=null;previous=null;lastFrame=0;blocked=false;video.srcObject=null;removeResource(resource);resource=null;metricsReset();}
+function reconnect(message='Восстановление связи'){
+ if(!wanted||retry||suspended)return;closePeer();state(message);$('placeholder').hidden=false;
+ if(navigator.onLine===false){state('Подключитесь к Wi-Fi FIT-LAB');return;}
+ retry=setTimeout(()=>{retry=null;connect()},Math.min(1000*2**Math.min(attempt++,3),8000));
+}
+async function playVideo(token){
+ try{await video.play();if(token===generation){blocked=false;document.body.dataset.paused=false;$('play').textContent='Остановить';}}
+ catch(e){if(token===generation){blocked=true;$('play').textContent='Смотреть';state('Нажмите «Смотреть»');}}
+}
+async function connect(){
+ if(!wanted||suspended)return;closePeer();$('placeholder').hidden=false;
+ if(navigator.onLine===false){state('Подключитесь к Wi-Fi FIT-LAB');return;}
+ const token=generation;started=performance.now();state('Подключение');
+ if(typeof RTCPeerConnection==='undefined'){wanted=false;$('play').textContent='Смотреть';state('Браузер не поддерживает WebRTC');return;}
+ const peer=pc=new RTCPeerConnection({iceServers:[]}),controller=new AbortController();abort=controller;
+ peer.addTransceiver('video',{direction:'recvonly'});
+ peer.ontrack=e=>{if(token!==generation)return;video.srcObject=e.streams[0]||new MediaStream([e.track]);playVideo(token);};
+ peer.onconnectionstatechange=()=>{if(token===generation&&['failed','disconnected'].includes(peer.connectionState))reconnect();};
+ try{
+  await peer.setLocalDescription(await peer.createOffer());
+  await new Promise(resolve=>{if(peer.iceGatheringState==='complete')return resolve();const timeout=setTimeout(resolve,2000);peer.onicegatheringstatechange=()=>{if(peer.iceGatheringState==='complete'){clearTimeout(timeout);resolve();}}});
+  if(token!==generation)return;
+  const timeout=setTimeout(()=>controller.abort(),5000);
+  let response;try{response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/sdp'},body:peer.localDescription.sdp,signal:controller.signal});}finally{clearTimeout(timeout);}
+  if(!response.ok)throw Error(response.status===404?'Ожидание сигнала камеры':'Трансляция недоступна');
+  const path=response.headers.get('Location'),url=path?new URL(path,endpoint).href:null;
+  if(token!==generation){removeResource(url);return;}
+  resource=url;const sdp=await response.text();if(token!==generation)return;
+  await peer.setRemoteDescription({type:'answer',sdp});
+ }catch(e){if(token===generation)reconnect(e.message==='Ожидание сигнала камеры'?e.message:'Проверяем связь со станцией');}
+}
+video.addEventListener('playing',()=>{if(wanted&&pc&&!blocked){$('placeholder').hidden=true;state('В эфире',true);}});
+$('play').onclick=()=>{
+ if(blocked&&pc){playVideo(generation);return;}
+ wanted=!wanted;$('play').textContent=wanted?'Остановить':'Смотреть';
+ if(wanted)connect();else{closePeer();state('Остановлено');$('placeholder').hidden=false;}
+};
+async function exitFullscreen(){
+ document.body.classList.remove('immersive');
+ if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){}}
+}
+$('fullscreen').onclick=async()=>{
+ if(document.fullscreenElement||document.body.classList.contains('immersive')){await exitFullscreen();return;}
+ try{if($('screen').requestFullscreen){await $('screen').requestFullscreen();return;}}catch(e){}
+ try{if(video.webkitEnterFullscreen&&video.readyState>=2){video.webkitEnterFullscreen();return;}}catch(e){}
+ document.body.classList.add('immersive');
+};
+$('exitFullscreen').onclick=exitFullscreen;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')exitFullscreen();});
+setInterval(()=>{
+ if(!pc||!wanted||blocked||document.hidden)return;
+ const now=performance.now();
+ if((lastFrame&&now-lastFrame>8000)||(!lastFrame&&now-started>12000))reconnect('Нет изображения · переподключение');
+},1000);
+setInterval(async()=>{const peer=pc;if(!peer||statsBusy||document.hidden)return;statsBusy=true;
+ try{const stats=await peer.getStats();if(peer!==pc)return;
+ for(const r of stats.values()){if(r.type!=='inbound-rtp'||(r.kind||r.mediaType)!=='video')continue;
+ const elapsed=previous&&previous.id===r.id?(r.timestamp-previous.timestamp)/1000:0;
+ if(elapsed>0){const delta=key=>Number.isFinite(r[key])&&Number.isFinite(previous[key])?Math.max(0,r[key]-previous[key]):NaN;
+ const frames=delta('framesDecoded'),received=delta('packetsReceived'),lost=delta('packetsLost'),emitted=delta('jitterBufferEmittedCount');
+ const format=(n,digits)=>Number.isFinite(n)?n.toFixed(digits):'—';
+ $('fps').textContent=format(frames/elapsed,0);$('rate').textContent=format(delta('bytesReceived')*8/elapsed/1e6,2);$('loss').textContent=received+lost?`${(100*lost/(received+lost)).toFixed(1)}%`:'—';$('buffer').textContent=emitted>0?format(delta('jitterBufferDelay')*1000/emitted,0):'—';
+ if(frames>0){lastFrame=performance.now();attempt=0;if(!blocked){state('В эфире',true);$('placeholder').hidden=true;}}
+ else if(lastFrame&&performance.now()-lastFrame>2500&&!blocked){state('Ожидание сигнала');$('placeholder').hidden=false;}}
+ $('size').textContent=r.frameWidth&&r.frameHeight?`${r.frameWidth} × ${r.frameHeight}`:'—';previous=r;
+ }}catch(e){}finally{statsBusy=false;}},1000);
+window.addEventListener('pagehide',()=>{suspended=true;closePeer();});
+window.addEventListener('pageshow',()=>{if(suspended){suspended=false;if(wanted)connect();}});
+window.addEventListener('offline',()=>{closePeer();if(wanted){state('Подключитесь к Wi-Fi FIT-LAB');$('placeholder').hidden=false;}});
+window.addEventListener('online',()=>{attempt=0;if(wanted&&!suspended)connect();});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&wanted&&!blocked&&!suspended&&(!pc||performance.now()-(lastFrame||started)>8000))reconnect();});
+let statusBusy=false,stationState=null;
+async function checkStation(){
+ if(statusBusy||suspended||document.hidden)return;statusBusy=true;
+ const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),2500);
+ try{const r=await fetch('/status.json',{cache:'no-store',signal:controller.signal});if(!r.ok)return;
+ const data=await r.json(),next=data.state;if(!['streaming','starting','stopped','stopping','error'].includes(next))return;
+ const before=stationState;stationState=next;
+ if(!wanted)return;
+ if(next==='stopped'||next==='stopping'||next==='error'){
+  if(pc||retry)closePeer();state('Трансляция выключена на станции');$('placeholder').hidden=false;
+ }else if(next==='streaming'&&before!==null&&before!==next&&!pc&&!retry){attempt=0;connect();}
+ }catch(e){}finally{clearTimeout(timeout);statusBusy=false;}
+}
+setInterval(checkStation,3000);
+connect();
+</script></html>

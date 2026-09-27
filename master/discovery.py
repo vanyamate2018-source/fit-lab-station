@@ -43,12 +43,15 @@ class DiscoveryServer:
             )
 
         if isinstance(message, ModuleAnnouncement):
+            if self.station.registry.get(message.module_id) is None and len(self.station.registry.all()) >= 32:
+                return DiscoveryResult(False, address, None, "module.hello", "discovery limit reached")
             module = ModuleInfo(
                 module_id=message.module_id,
                 kind=message.kind,
                 name=message.name,
                 protocol_version=message.protocol_version,
                 capabilities=set(message.capabilities),
+                address=address[0],
             )
             accepted = self.station.register_module(module)
             return DiscoveryResult(

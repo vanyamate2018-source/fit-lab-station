@@ -21,8 +21,8 @@ def test_receiver_registration() -> None:
 
     assert station.register_module(module) is True
     assert station.registry.get("receiver-test") is module
-    assert module.state is ModuleState.READY
-    assert station.journal.snapshot()[-1].code == "module.ready"
+    assert module.state is ModuleState.DISCOVERED
+    assert station.journal.snapshot()[-1].code == "module.discovered"
 
 
 def test_incompatible_module_is_rejected() -> None:
@@ -54,5 +54,5 @@ def test_timeout_is_logged_once_and_heartbeat_recovers_module() -> None:
 
     station.heartbeat(module.module_id)
 
-    assert module.state is ModuleState.READY
+    assert module.state is ModuleState.DISCOVERED
     assert station.journal.snapshot()[-1].code == "module.reconnected"

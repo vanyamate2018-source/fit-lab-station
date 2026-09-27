@@ -1,0 +1,18 @@
+[Unit]
+Description=FIT-LAB WFB LAN receiver
+After=network-online.target NetworkManager.service
+Wants=network-online.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/local/libexec/fit-lab/forwarder.py
+Restart=always
+RestartSec=5
+KillMode=control-group
+UMask=0077
+NoNewPrivileges=true
+ProtectHome=true
+ProtectSystem=strict
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target

@@ -1,6 +1,8 @@
 import socket
 import threading
 import time
+import json
+import pytest
 
 from master.core import StationCore
 from master.discovery import DiscoveryServer
@@ -89,7 +91,7 @@ def test_heartbeat_recovers_module() -> None:
 
     assert result.accepted is True
     assert result.message_type == "module.heartbeat"
-    assert module.state is ModuleState.READY
+    assert module.state is ModuleState.DISCOVERED
     assert station.journal.snapshot()[-1].code == "module.reconnected"
 
 
@@ -107,7 +109,7 @@ def test_unknown_heartbeat_is_rejected() -> None:
     assert result.error == "unknown module"
 
 
-def test_repeated_hello_does_not_duplicate_ready_event() -> None:
+def test_repeated_hello_does_not_duplicate_discovered_event() -> None:
     station = StationCore()
     server = DiscoveryServer(station)
     hello = build_receiver_announcement(module_id="receiver-repeat")
@@ -118,4 +120,34 @@ def test_repeated_hello_does_not_duplicate_ready_event() -> None:
     assert server.process_datagram(payload, address).accepted is True
 
     codes = [event.code for event in station.journal.snapshot()]
-    assert codes.count("module.ready") == 1
+    assert codes.count("module.discovered") == 1
+
+
+def test_discovery_records_observed_address_without_marking_ready():
+    station = StationCore()
+    server = DiscoveryServer(station)
+    hello = build_receiver_announcement(module_id='receiver-address')
+    server.process_datagram(encode_announcement(hello), ('192.168.2.20', 60400))
+    module = station.registry.get('receiver-address')
+    assert module.address == '192.168.2.20'
+    assert module.state is ModuleState.DISCOVERED
+
+
+@pytest.mark.parametrize('change', [{'version': True}, {'module': {'id': 'x', 'name': 'x' * 129, 'kind': 'receiver'}}, {'padding': 'x' * 8192}])
+def test_unbounded_or_malformed_announcements_are_rejected(change):
+    message = json.loads(encode_announcement(build_receiver_announcement(module_id='test')))
+    message.update(change)
+    result = DiscoveryServer(StationCore()).process_datagram(json.dumps(message).encode(), ('127.0.0.1', 1))
+    assert not result.accepted
+
+
+def test_discovery_inventory_is_bounded_and_existing_modules_can_reconnect():
+    station = StationCore()
+    server = DiscoveryServer(station)
+    for index in range(33):
+        hello = build_receiver_announcement(module_id=f'rx-{index}')
+        result = server.process_datagram(encode_announcement(hello), ('127.0.0.1', 60400))
+        assert result.accepted is (index < 32)
+    assert len(station.registry.all()) == 32
+    hello = build_receiver_announcement(module_id='rx-0')
+    assert server.process_datagram(encode_announcement(hello), ('127.0.0.1', 60400)).accepted

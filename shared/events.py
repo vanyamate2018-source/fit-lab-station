@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from collections import deque
 from dataclasses import asdict, dataclass, field
-from datetime import UTC, datetime
-from enum import StrEnum
+from datetime import timezone, datetime
+UTC = timezone.utc
+from shared.compat import StrEnum
 from typing import Any
 
 

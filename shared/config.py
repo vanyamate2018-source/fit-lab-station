@@ -10,11 +10,19 @@ ENV_DATA_ROOT = "FIT_LAB_DATA_ROOT"
 ENV_CONFIG_PATH = "FIT_LAB_CONFIG"
 
 
+def default_data_root() -> Path:
+    raw = os.environ.get(ENV_DATA_ROOT, "").strip()
+    if raw:
+        return Path(raw).expanduser()
+    ssd = Path("/Volumes/FIT-LAB")
+    return ssd / "data" if ssd.is_mount() else Path.cwd() / "data"
+
+
 def default_config_path() -> Path:
     raw = os.environ.get(ENV_CONFIG_PATH, "").strip()
     if raw:
         return Path(raw).expanduser()
-    return Path.home() / ".config" / "fit-lab" / "station.json"
+    return default_data_root() / "config" / "station.json"
 
 
 @dataclass(slots=True, frozen=True)
@@ -34,7 +42,7 @@ class StationConfig:
             if raw_root:
                 return cls(data_root=Path(raw_root).expanduser())
 
-        return cls(data_root=Path.cwd() / "data")
+        return cls(data_root=default_data_root())
 
     @classmethod
     def from_env(cls) -> "StationConfig":
@@ -49,6 +57,8 @@ class StationConfig:
             "backups",
             "exports",
             "temp",
+            "config",
+            "cache",
         )
         return tuple(self.data_root / name for name in names)
 

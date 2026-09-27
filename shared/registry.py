@@ -20,7 +20,9 @@ class ModuleRegistry:
                 f"protocol {module.protocol_version} is incompatible with {PROTOCOL_VERSION}"
             )
         module.last_seen_monotonic = time.monotonic()
-        module.state = ModuleState.READY
+        # Discovery confirms presence only. Readiness requires a separate
+        # authenticated initialization, which is not implemented yet.
+        module.state = ModuleState.DISCOVERED
         self._modules[module.module_id] = module
         return module
 
@@ -29,7 +31,7 @@ class ModuleRegistry:
         previous_state = module.state
         module.last_seen_monotonic = time.monotonic()
         if module.state in {ModuleState.UNREACHABLE, ModuleState.RECONNECTING}:
-            module.state = ModuleState.READY
+            module.state = ModuleState.DISCOVERED
         return module, previous_state
 
     def mark_stale(self, timeout_seconds: float) -> list[ModuleInfo]:

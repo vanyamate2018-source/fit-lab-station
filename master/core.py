@@ -47,6 +47,7 @@ class StationCore:
             existing.name = module.name
             existing.capabilities = set(module.capabilities)
             existing.protocol_version = module.protocol_version
+            existing.address = module.address
             return self.heartbeat(existing.module_id)
 
         try:
@@ -67,8 +68,8 @@ class StationCore:
             Event.now(
                 severity=Severity.INFO,
                 source="master",
-                code="module.ready",
-                message=f"Модуль готов: {module.public_label()}",
+                code="module.discovered",
+                message=f"Модуль обнаружен: {module.public_label()}",
                 details={
                     "module_id": module.module_id,
                     "kind": module.kind.value,
