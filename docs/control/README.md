@@ -108,7 +108,19 @@ Flight Controller → FIT-LAB RX → RF → FIT-LAB TX → RP2040
 - [Архитектура](architecture.md)
 - [План прошивок](firmware-plan.md)
 - [Чек-лист разработки](checklist.md)
+- [Чёткий план реализации](implementation-plan.md)
+- [RP2040 + FreeRTOS](freertos-bridge.md)
+- [Power Board](power-board.md)
+- [UI Video + Control](ui-concept.md)
 
 ## Статус
 
 Раздел фиксирует целевую архитектуру. Реальные TX/RX прошивки и RP2040 Bridge ещё не реализованы и не должны считаться готовыми до стендовых тестов, проверки failsafe и подтверждения живого управления без моторов.
+
+
+## Дополнительно зафиксировано
+
+- RP2040 Bridge работает под FreeRTOS с приоритетом CRSF/watchdog над сервисными задачами.
+- Отдельная FIT-LAB Power Board включает/выключает TX по команде через RP2040 и измеряет питание.
+- Мастер-пульт получает единый экран Video + Control и две темы: Cyan и Amber.
+- Интерактивный макет не управляет реальным железом и используется только для UI/UX проверки.
