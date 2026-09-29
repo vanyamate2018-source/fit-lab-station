@@ -38,6 +38,12 @@
 
 Подробный архитектурный план: `docs/architecture/system-plan.md`.
 
+Подсистема управления: [`docs/control/README.md`](docs/control/README.md).
+
+Интерактивный UI-макет Video + Control: [`docs/control/demo/FIT-LAB-Master-Control-Demo.html`](docs/control/demo/FIT-LAB-Master-Control-Demo.html).
+
+PDF-схема FIT-LAB Control v1: [`docs/control/FIT-LAB-Control-v1-Scheme.pdf`](docs/control/FIT-LAB-Control-v1-Scheme.pdf).
+
 ## Проверки
 
 Core-тесты запускаются автоматически в GitHub Actions на Python 3.12 и 3.14.
