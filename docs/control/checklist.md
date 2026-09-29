@@ -158,3 +158,26 @@
 - [ ] Инструкция прошивки RX.
 - [ ] Таблица совместимых target.
 - [ ] Руководство оператора.
+
+
+## L. FreeRTOS / Power Board
+
+- [x] Зафиксировать FreeRTOS для RP2040 Bridge.
+- [x] Зафиксировать приоритет CRSF/watchdog над сервисными задачами.
+- [x] Зафиксировать отдельную цифровую Power Board.
+- [ ] Выбрать high-side switch/eFuse.
+- [ ] Выбрать датчик напряжения/тока после измерения Ranger.
+- [ ] Спроектировать Power Good/Fault линии.
+- [ ] Реализовать TX power state machine.
+- [ ] Проверить normal shutdown.
+- [ ] Проверить emergency power cut.
+- [ ] Проверить undervoltage/overcurrent fault.
+
+## M. UI / Demo
+
+- [x] Зафиксировать единый экран Video + Control.
+- [x] Зафиксировать Cyan и Amber темы.
+- [x] Подготовить интерактивный тестовый макет.
+- [ ] Встроить Control page в реальный PySide6 Master.
+- [ ] Добавить переключатель темы в настройки.
+- [ ] Добавить реальные статусы RP2040/Power Board/TX/RX.
