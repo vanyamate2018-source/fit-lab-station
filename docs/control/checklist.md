@@ -181,3 +181,36 @@
 - [ ] Встроить Control page в реальный PySide6 Master.
 - [ ] Добавить переключатель темы в настройки.
 - [ ] Добавить реальные статусы RP2040/Power Board/TX/RX.
+
+
+## N. Навигация / карта
+
+- [x] Зафиксировать отдельный слой FIT-LAB Navigation.
+- [x] Разделить Heading и Course over Ground.
+- [x] Зафиксировать Home и Rally/контрольную точку как разные сущности.
+- [ ] Получать GPS position из FC telemetry.
+- [ ] Получать altitude / ground speed / heading / course.
+- [ ] Отображать возраст позиции и GPS fix.
+- [ ] Иконка дрона с направлением корпуса.
+- [ ] Вектор фактического движения.
+- [ ] Трек полёта.
+- [ ] Distance/Bearing to Home.
+- [ ] Режимы «Видео», «Карта», «Видео + карта».
+- [ ] Offline/cache strategy для карт.
+- [ ] Проверить работу карты при потере видео.
+
+## O. Будущий бортовой автопилот / companion
+
+- [x] Зафиксировать, что companion SBC не заменяет Flight Controller.
+- [x] Базовый RC/link-loss failsafe и Return остаются на FC.
+- [ ] Выбрать ArduPilot/PX4/другой подтверждённый FC stack.
+- [ ] Выбрать MAVLink/поддерживаемый интерфейс SBC ↔ FC.
+- [ ] Home/Rally model.
+- [ ] Предзагруженная безопасная миссия.
+- [ ] Geofence.
+- [ ] Low-battery behavior.
+- [ ] Loss-of-control-link test.
+- [ ] Loss-of-companion test.
+- [ ] Loss-of-GPS test.
+- [ ] Return-to-control-point bench simulation.
+- [ ] Полевые испытания только после независимой проверки FC failsafe.
