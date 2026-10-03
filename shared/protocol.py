@@ -1,7 +1,0 @@
-PROTOCOL_NAME = "fit-lab"
-PROTOCOL_VERSION = 1
-
-MODULE_MASTER = "master"
-MODULE_RECEIVER = "receiver"
-MODULE_CONTROL = "control"
-MODULE_SDR = "sdr"

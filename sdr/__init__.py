@@ -1,1 +1,0 @@
-"""FIT-LAB SDR module."""
